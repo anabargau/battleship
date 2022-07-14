@@ -1,0 +1,60 @@
+body {
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+  margin: 0;
+  border: none;
+}
+
+#content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  display: flex;
+  height: 20%;
+  align-items: center;
+  justify-content: center;
+}
+
+.boards-area {
+  display: flex;
+  justify-content: space-around;
+  flex: 1;
+}
+
+.board-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+}
+
+.computer-cell, 
+.player-cell {
+  border: 1px solid black;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.player-cell.hover {
+  background-color: grey;
+}
+
+.occupied {
+  background-color: black;
+}
