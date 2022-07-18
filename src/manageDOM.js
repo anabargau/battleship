@@ -1,7 +1,8 @@
+import Game from './index';
+
 const Gameboard = require('./gameboard');
 const Ship = require('./ship');
 const Player = require('./player');
-const Game = require('./index');
 
 const manageDOM = (() => {
   const content = document.getElementById('content');
@@ -51,16 +52,62 @@ const manageDOM = (() => {
     return boardArea;
   };
 
-  const setHitListeners = (board, player, computer) => {
+  const setHitListeners = (player, computer) => {
     const cells = document.getElementsByClassName('computer-cell');
     for (let i = 0; i < cells.length; i++) {
       cells[i].addEventListener('click', () => {
         if (player.gameboard.placedShips.length === 5) {
-          board.receiveAttack(parseInt(cells[i].id[0]), parseInt(cells[i].id[1]));
+          computer.gameboard.receiveAttack(parseInt(cells[i].id[0]), parseInt(cells[i].id[1]), computer.randomAttack(player));
           displayUI(player, computer);
         }
       });
     }
+  };
+
+  const playAgain = () => {
+    const newGame = Game();
+    for (let i = 0; i < 5; i++) {
+      newGame.computer.placeShipRandomly(i + 1);
+    }
+    manageDOM.displayUI(newGame.player, newGame.computer);
+  };
+
+  const showFinishedGameModal = (winner) => {
+    const modal = document.createElement('div');
+    modal.id = 'modal';
+    const winnerMessage = document.createElement('div');
+    winnerMessage.textContent = `${winner} won!`;
+    winnerMessage.classList.add('winner-message');
+    const playAgainMessage = document.createElement('div');
+    playAgainMessage.textContent = 'Do you want to play again?';
+    playAgainMessage.classList.add('play-again-message');
+    const yesBtn = document.createElement('button');
+    yesBtn.textContent = 'Yes';
+    yesBtn.id = 'yes-btn';
+    const noBtn = document.createElement('button');
+    noBtn.textContent = 'No';
+    noBtn.id = 'no-btn';
+    const btnContainer = document.createElement('div');
+    btnContainer.classList.add('btn-container');
+    btnContainer.appendChild(yesBtn);
+    btnContainer.appendChild(noBtn);
+    modal.appendChild(winnerMessage);
+    modal.appendChild(playAgainMessage);
+    modal.appendChild(btnContainer);
+    content.appendChild(modal);
+    yesBtn.addEventListener('click', playAgain);
+    noBtn.addEventListener('click', () => modal.style.display = 'none');
+  };
+
+  const checkIfAllShipsSunk = (player, computer) => {
+    let winner = '';
+    if (player.gameboard.allShipsSunk()) {
+      winner = computer;
+    }
+    if (computer.gameboard.allShipsSunk()) {
+      winner = player;
+    }
+    return winner.name;
   };
 
   const displayUI = (player, computer) => {
@@ -77,9 +124,27 @@ const manageDOM = (() => {
     boardsDiv.appendChild(createBoardArea(player));
     boardsDiv.appendChild(createBoardArea(computer));
     content.appendChild(boardsDiv);
-    setHitListeners(computer.gameboard, player, computer);
+    changeMessage(player.gameboard.placedShips.length, computer.gameboard.showHitPositions().length);
+    if (player.gameboard.placedShips.length === 5) {
+      const winner = checkIfAllShipsSunk(player, computer);
+      if (winner) {
+        showFinishedGameModal(winner);
+        return;
+      }
+    }
+    setHitListeners(player, computer);
     if (player.gameboard.placedShips.length < 5) {
       hoverShip(player, computer, 5 - player.gameboard.placedShips.length);
+    }
+  };
+
+  const changeMessage = (placedShips, hitPositions) => {
+    const message = document.getElementById('game-message');
+    clearMessage();
+    if (placedShips < 5) {
+      message.textContent = showPlaceShipMessage();
+    } else if (placedShips === 5 && hitPositions === 0) {
+      message.textContent = showStartGameMessage();
     }
   };
 
@@ -141,14 +206,18 @@ const manageDOM = (() => {
     }
   };
 
-  const showStartGameMessage = () => {
+  const clearMessage = () => {
     const message = document.getElementById('game-message');
-    message.textContent = 'Let\'s start the game! You make the first attack!';
+    message.textContent = '';
   };
+
+  const showStartGameMessage = () => 'Let\'s start the game! You make the first attack!';
+
+  const showPlaceShipMessage = () => 'Place all your ships!';
 
   return {
     displayUI, hoverShip, setHitListeners, showStartGameMessage,
   };
 })();
 
-module.exports = manageDOM;
+export default manageDOM;

@@ -4,6 +4,12 @@ const manageDOM = require('./manageDOM');
 const Player = (cpu = true) => {
   const computer = cpu;
   const gameboard = Gameboard();
+  let name = '';
+  if (computer) {
+    name = 'Computer';
+  } else {
+    name = 'You';
+  }
 
   const getRandomNum = () => Math.floor(Math.random() * 10);
 
@@ -36,7 +42,7 @@ const Player = (cpu = true) => {
   };
 
   return {
-    gameboard, placeShipRandomly, randomAttack, computer,
+    gameboard, placeShipRandomly, randomAttack, computer, name,
   };
 };
 
