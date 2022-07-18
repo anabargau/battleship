@@ -1,8 +1,4 @@
-import Game from './index';
-
-const Gameboard = require('./gameboard');
-const Ship = require('./ship');
-const Player = require('./player');
+const Game = require('./game');
 
 const manageDOM = (() => {
   const content = document.getElementById('content');
@@ -110,32 +106,36 @@ const manageDOM = (() => {
     return winner.name;
   };
 
-  const displayUI = (player, computer) => {
-    content.textContent = '';
+  const createTitleDiv = () => {
     const title = document.createElement('div');
     title.classList.add('title');
     title.textContent = 'BATTLESHIP';
-    content.appendChild(title);
+    return title;
+  };
+
+  const createMessageDiv = () => {
     const gameMessage = document.createElement('div');
     gameMessage.id = 'game-message';
-    content.appendChild(gameMessage);
+    return gameMessage;
+  };
+
+  const createBoardsDiv = (player, computer) => {
     const boardsDiv = document.createElement('div');
     boardsDiv.classList.add('boards-area');
     boardsDiv.appendChild(createBoardArea(player));
     boardsDiv.appendChild(createBoardArea(computer));
-    content.appendChild(boardsDiv);
-    changeMessage(player.gameboard.placedShips.length, computer.gameboard.showHitPositions().length);
+    return boardsDiv;
+  };
+
+  const checkIfFinishedGame = (player, computer) => {
     if (player.gameboard.placedShips.length === 5) {
       const winner = checkIfAllShipsSunk(player, computer);
       if (winner) {
         showFinishedGameModal(winner);
-        return;
+        return true;
       }
     }
-    setHitListeners(player, computer);
-    if (player.gameboard.placedShips.length < 5) {
-      hoverShip(player, computer, 5 - player.gameboard.placedShips.length);
-    }
+    return false;
   };
 
   const changeMessage = (placedShips, hitPositions) => {
@@ -215,9 +215,27 @@ const manageDOM = (() => {
 
   const showPlaceShipMessage = () => 'Place all your ships!';
 
+  const displayUI = (player, computer) => {
+    content.textContent = '';
+    const title = createTitleDiv();
+    content.appendChild(title);
+    const gameMessage = createMessageDiv();
+    content.appendChild(gameMessage);
+    const boardsDiv = createBoardsDiv(player, computer);
+    content.appendChild(boardsDiv);
+    changeMessage(player.gameboard.placedShips.length, computer.gameboard.showHitPositions().length);
+    if (checkIfFinishedGame(player, computer)) {
+      return;
+    }
+    setHitListeners(player, computer);
+    if (player.gameboard.placedShips.length < 5) {
+      hoverShip(player, computer, 5 - player.gameboard.placedShips.length);
+    }
+  };
+
   return {
     displayUI, hoverShip, setHitListeners, showStartGameMessage,
   };
 })();
 
-export default manageDOM;
+module.exports = manageDOM;

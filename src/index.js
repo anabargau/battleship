@@ -1,16 +1,7 @@
 import './style.css';
-import manageDOM from './manageDOM';
 
-const Gameboard = require('./gameboard');
-const Ship = require('./ship');
-const Player = require('./player');
-
-const Game = () => {
-  const player = Player(false);
-  const computer = Player();
-
-  return { player, computer };
-};
+const manageDOM = require('./manageDOM');
+const Game = require('./game');
 
 const newGame = Game();
 for (let i = 0; i < 5; i++) {
