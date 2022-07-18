@@ -58,3 +58,11 @@ body {
 .occupied {
   background-color: black;
 }
+
+.missed {
+  background-color: aqua;
+}
+
+.hit {
+  background-color: red;
+}

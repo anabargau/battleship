@@ -16,9 +16,7 @@ const newGame = Game();
 for (let i = 0; i < 5; i++) {
   newGame.computer.placeShipRandomly(i + 1);
 }
-
 manageDOM.displayUI(newGame.player, newGame.computer);
-manageDOM.setHitListeners(newGame.computer.gameboard, newGame.player, newGame.computer);
-manageDOM.hoverShip(5, newGame.player, newGame.computer);
+manageDOM.hoverShip(newGame.player, newGame.computer);
 
 export default Game;

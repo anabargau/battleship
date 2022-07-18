@@ -51,17 +51,36 @@ const manageDOM = (() => {
     return boardArea;
   };
 
+  const setHitListeners = (board, player, computer) => {
+    const cells = document.getElementsByClassName('computer-cell');
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].addEventListener('click', () => {
+        if (player.gameboard.placedShips.length === 5) {
+          board.receiveAttack(parseInt(cells[i].id[0]), parseInt(cells[i].id[1]));
+          displayUI(player, computer);
+        }
+      });
+    }
+  };
+
   const displayUI = (player, computer) => {
     content.textContent = '';
     const title = document.createElement('div');
     title.classList.add('title');
     title.textContent = 'BATTLESHIP';
     content.appendChild(title);
+    const gameMessage = document.createElement('div');
+    gameMessage.id = 'game-message';
+    content.appendChild(gameMessage);
     const boardsDiv = document.createElement('div');
     boardsDiv.classList.add('boards-area');
     boardsDiv.appendChild(createBoardArea(player));
     boardsDiv.appendChild(createBoardArea(computer));
     content.appendChild(boardsDiv);
+    setHitListeners(computer.gameboard, player, computer);
+    if (player.gameboard.placedShips.length < 5) {
+      hoverShip(player, computer, 5 - player.gameboard.placedShips.length);
+    }
   };
 
   const showHover = (cell, length, orientation) => {
@@ -78,7 +97,7 @@ const manageDOM = (() => {
       }
     } else {
       while (x + i < 10 && i < length) {
-        const hover = document.getElementById(`${x + 1}${y}player`);
+        const hover = document.getElementById(`${x + i}${y}player`);
         if (!hover.classList.contains('occupied')) {
           hover.classList.add('hover');
         }
@@ -94,38 +113,42 @@ const manageDOM = (() => {
     }
   };
 
-  const hoverShip = (length, player, computer) => {
-    let size = length;
+  const shiftKeyPressed = (e) => {
+    if (e.shiftKey) {
+      return 'vertical';
+    }
+    return 'horizontal';
+  };
+
+  const hoverShip = (player, computer, size = 5) => {
+    let orientation;
+    let length = size;
     const board = player.gameboard;
-    const orientation = 'horizontal';
     const cells = document.getElementsByClassName('player-cell');
     for (let i = 0; i < cells.length; i++) {
-      cells[i].addEventListener('mouseover', () => showHover(cells[i], length, orientation));
+      cells[i].addEventListener('mouseover', (e) => {
+        orientation = shiftKeyPressed(e);
+        showHover(cells[i], length, orientation);
+      });
       cells[i].addEventListener('mouseout', removeHover);
-      cells[i].addEventListener('click', () => {
+      cells[i].addEventListener('click', (e) => {
+        orientation = shiftKeyPressed(e);
         if (board.placeShip(parseInt(cells[i].id[0]), parseInt(cells[i].id[1]), length, orientation)) {
-          size--;
+          length--;
         }
-        displayUI(player, computer);
-        if (size > 0) {
-          hoverShip(size, player, computer);
-        }
-      });
-    }
-  };
-
-  const setHitListeners = (board, player, computer) => {
-    const cells = document.getElementsByClassName('computer-cell');
-    for (let i = 0; i < cells.length; i++) {
-      cells[i].addEventListener('click', () => {
-        console.log('ii');
-        board.receiveAttack(cells[i].id[0], cells[i].id[1]);
         displayUI(player, computer);
       });
     }
   };
 
-  return { displayUI, hoverShip, setHitListeners };
+  const showStartGameMessage = () => {
+    const message = document.getElementById('game-message');
+    message.textContent = 'Let\'s start the game! You make the first attack!';
+  };
+
+  return {
+    displayUI, hoverShip, setHitListeners, showStartGameMessage,
+  };
 })();
 
 module.exports = manageDOM;

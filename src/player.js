@@ -1,4 +1,5 @@
 const Gameboard = require('./gameboard');
+const manageDOM = require('./manageDOM');
 
 const Player = (cpu = true) => {
   const computer = cpu;

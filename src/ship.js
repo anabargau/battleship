@@ -14,8 +14,6 @@ const Ship = (size) => {
   const hit = (position) => {
     if (shipArea[position] === 0) {
       shipArea[position] = 1;
-    } else {
-      return 'That location has already been hit';
     }
   };
 

@@ -20,7 +20,7 @@ const Gameboard = () => {
 
   const gameboard = buildBoard();
 
-  const checkIfValidCoord = (x, y, length, orientation) => {
+  const checkIfAvailablePosition = (x, y, length, orientation) => {
     if (orientation === 'vertical') {
       if (x + length > 10) {
         return false;
@@ -28,11 +28,24 @@ const Gameboard = () => {
     } else if (y + length > 10) {
       return false;
     }
+    if (orientation === 'vertical') {
+      for (let i = x; i < x + length; i++) {
+        if (arrayIncludesCoord(occupiedCells, [i, y]) || i > 10) {
+          return false;
+        }
+      }
+    } else {
+      for (let i = y; i < y + length; i++) {
+        if (arrayIncludesCoord(occupiedCells, [x, i]) || i > 10) {
+          return false;
+        }
+      }
+    }
     return true;
   };
 
   const placeShip = (coordX, coordY, length, orientation) => {
-    if (checkIfValidCoord(coordX, coordY, length, orientation)) {
+    if (checkIfAvailablePosition(coordX, coordY, length, orientation)) {
       const newShip = {};
       newShip.ship = Ship(length);
       newShip.coord = [];
@@ -115,25 +128,8 @@ const Gameboard = () => {
     return true;
   };
 
-  const checkIfAvailablePosition = (x, y, length, orientation) => {
-    if (orientation === 'vertical') {
-      for (let i = x; i < x + length; i++) {
-        if (arrayIncludesCoord(occupiedCells, [i, y]) || i > 10) {
-          return false;
-        }
-      }
-    } else {
-      for (let i = y; i < y + length; i++) {
-        if (arrayIncludesCoord(occupiedCells, [x, i]) || i > 10) {
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
   return {
-    gameboard, buildBoard, checkIfValidCoord, placeShip, showOccupiedCells, receiveAttack, placedShips, findIndexInArray, showMissedAttacks, allShipsSunk, arrayIncludesCoord, checkIfAvailablePosition, showHitPositions,
+    gameboard, buildBoard, placeShip, showOccupiedCells, receiveAttack, placedShips, findIndexInArray, showMissedAttacks, allShipsSunk, arrayIncludesCoord, checkIfAvailablePosition, showHitPositions,
   };
 };
 

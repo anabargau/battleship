@@ -11,12 +11,12 @@ test('creates ship\'s area', () => {
 });
 
 test('shows ship area', () => {
-  expect(Ship(4).getShipArea()).toMatchObject([0, 0, 0, 0]);
+  expect(Ship(4).shipArea).toMatchObject([0, 0, 0, 0]);
 });
 
 const testHit = (testShip, location) => {
   testShip.hit(location);
-  return testShip.getShipArea();
+  return testShip.shipArea;
 };
 
 const testSunk = (testShip) => {
@@ -56,29 +56,30 @@ test('check if coordinates are valid', () => {
 
 const testGameboard = Gameboard();
 testGameboard.placeShip(2, 2, 3, 'horizontal');
+testGameboard.placeShip(5, 5, 3, 'horizontal');
 
 test('check if the right number of cells are occupied', () => {
-  expect(testGameboard.showOccupiedCells().length).toEqual(3);
+  expect(testGameboard.showOccupiedCells().length).toEqual(6);
 });
 
 test('check if the ship is saved in the array of placed ships', () => {
   expect(JSON.stringify(testGameboard.placedShips[0].ship)).toEqual(JSON.stringify(Ship(3)));
 });
 
-testGameboard.receiveAttack(2, 2);
+testGameboard.receiveAttack(5, 5);
 
 test('check if attack hits the ship', () => {
-  expect(testGameboard.placedShips[0].ship.getShipArea()).toEqual([1, 0, 0]);
+  expect(testGameboard.placedShips[1].ship.shipArea).toEqual([1, 0, 0]);
 });
 
 test('check if findind coordinates index works', () => {
   expect(testGameboard.findIndexInArray(testGameboard.placedShips[0].coord, [2, 3])).toEqual(1);
 });
 
-testGameboard.receiveAttack(5, 5);
+testGameboard.receiveAttack(0, 0);
 
 test('missed attacks are registered', () => {
-  expect(JSON.stringify(testGameboard.showMissedAttacks())).toBe(JSON.stringify([[5, 5]]));
+  expect(JSON.stringify(testGameboard.showMissedAttacks())).toBe(JSON.stringify([[0, 0]]));
 });
 
 test('all ships sunk when there is still a ship left', () => {
@@ -90,13 +91,18 @@ testGameboard2.placeShip(3, 3, 3, 'vertical');
 testGameboard2.receiveAttack(3, 3);
 testGameboard2.receiveAttack(4, 3);
 testGameboard2.receiveAttack(5, 3);
+testGameboard2.receiveAttack(9, 8);
 
 test('all ships sunk when there are none left', () => {
   expect(testGameboard2.allShipsSunk()).toBeTruthy();
 });
 
-test('check if array includes coordinates pair', () => {
+test('check if occupied array includes coordinates pair', () => {
   expect(testGameboard2.arrayIncludesCoord(testGameboard2.showOccupiedCells(), [3, 3])).toBeTruthy;
+});
+
+test('check if missed shot array includes coordinates pair', () => {
+  expect(testGameboard2.arrayIncludesCoord(testGameboard2.showMissedAttacks(), [9, 8])).toBeTruthy;
 });
 
 test('check if location is available to place a ship when the location is occupied', () => {
@@ -116,4 +122,13 @@ testPlayer.randomAttack(testPlayer);
 
 test('register random attacks', () => {
   expect(testPlayer.gameboard.showHitPositions().length).toBe(1);
+});
+
+const testPlayer2 = Player();
+for (let i = 0; i < 5; i++) {
+  testPlayer2.placeShipRandomly(i + 1);
+}
+
+test('check if it places the ships randomly', () => {
+  expect(testPlayer2.gameboard.placedShips.length).toBe(5);
 });
