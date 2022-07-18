@@ -27,6 +27,11 @@ const manageDOM = (() => {
           }
           cell.classList.add('occupied');
         }
+        for (let k = 0; k < board.showSunkShipsCoord().length; k++) {
+          if (board.arrayIncludesCoord(board.showSunkShipsCoord()[k], [i, j])) {
+            cell.classList.add('sunk');
+          }
+        }
       }
     }
     return displayedBoard;
@@ -68,12 +73,11 @@ const manageDOM = (() => {
     manageDOM.displayUI(newGame.player, newGame.computer);
   };
 
-  const showFinishedGameModal = (winner) => {
-    const modal = document.createElement('div');
-    modal.id = 'modal';
-    const winnerMessage = document.createElement('div');
+  const showFinishedGamewinMsg = (winner) => {
+    const winMsg = document.createElement('div');
+    winMsg.id = 'win-message';
+    const winnerMessage = document.getElementById('game-message');
     winnerMessage.textContent = `${winner} won!`;
-    winnerMessage.classList.add('winner-message');
     const playAgainMessage = document.createElement('div');
     playAgainMessage.textContent = 'Do you want to play again?';
     playAgainMessage.classList.add('play-again-message');
@@ -87,12 +91,11 @@ const manageDOM = (() => {
     btnContainer.classList.add('btn-container');
     btnContainer.appendChild(yesBtn);
     btnContainer.appendChild(noBtn);
-    modal.appendChild(winnerMessage);
-    modal.appendChild(playAgainMessage);
-    modal.appendChild(btnContainer);
-    content.appendChild(modal);
+    winMsg.appendChild(playAgainMessage);
+    winMsg.appendChild(btnContainer);
+    content.appendChild(winMsg);
     yesBtn.addEventListener('click', playAgain);
-    noBtn.addEventListener('click', () => modal.style.display = 'none');
+    noBtn.addEventListener('click', () => winMsg.style.display = 'none');
   };
 
   const checkIfAllShipsSunk = (player, computer) => {
@@ -109,7 +112,7 @@ const manageDOM = (() => {
   const createTitleDiv = () => {
     const title = document.createElement('div');
     title.classList.add('title');
-    title.textContent = 'BATTLESHIP';
+    title.textContent = 'Battleship';
     return title;
   };
 
@@ -131,7 +134,7 @@ const manageDOM = (() => {
     if (player.gameboard.placedShips.length === 5) {
       const winner = checkIfAllShipsSunk(player, computer);
       if (winner) {
-        showFinishedGameModal(winner);
+        showFinishedGamewinMsg(winner);
         return true;
       }
     }

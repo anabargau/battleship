@@ -5,6 +5,7 @@ const Gameboard = () => {
   const placedShips = [];
   const missedAttacks = [];
   const hitPositions = [];
+  const sunkShipsCoord = [];
 
   const buildBoard = () => {
     const board = [];
@@ -91,6 +92,9 @@ const Gameboard = () => {
       if (arrayIncludesCoord(placedShips[i].coord, [x, y])) {
         const index = findIndexInArray(placedShips[i].coord, [x, y]);
         placedShips[i].ship.hit(index);
+        if (placedShips[i].ship.isSunk()) {
+          sunkShipsCoord.push(placedShips[i].coord);
+        }
         return;
       }
     }
@@ -115,6 +119,8 @@ const Gameboard = () => {
 
   const showHitPositions = () => hitPositions;
 
+  const showSunkShipsCoord = () => sunkShipsCoord;
+
   const receiveAttack = (coordX, coordY) => {
     if (arrayIncludesCoord(hitPositions, [coordX, coordY])) {
       return false;
@@ -129,7 +135,7 @@ const Gameboard = () => {
   };
 
   return {
-    gameboard, buildBoard, placeShip, showOccupiedCells, receiveAttack, placedShips, findIndexInArray, showMissedAttacks, allShipsSunk, arrayIncludesCoord, checkIfAvailablePosition, showHitPositions,
+    gameboard, buildBoard, placeShip, showOccupiedCells, receiveAttack, placedShips, findIndexInArray, showMissedAttacks, allShipsSunk, arrayIncludesCoord, checkIfAvailablePosition, showHitPositions, showSunkShipsCoord,
   };
 };
 

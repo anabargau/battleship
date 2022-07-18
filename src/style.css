@@ -1,9 +1,22 @@
+@font-face {
+  font-family: handwrite;
+  src: url('./Sacramento-Regular.ttf');
+}
+
+:root {
+  --color-blue: #013883;
+  --color-light-grey: #f4f0e8 ;
+  --color-medium-grey: #9ca3af;
+}
+
 body {
   height: 100vh;
   width: 100vw;
   box-sizing: border-box;
   margin: 0;
   border: none;
+  font-family: handwrite, sans-serif;
+  color: var(--color-blue);
 }
 
 #content {
@@ -11,6 +24,19 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
+  background-image: url(./paper);
+  background-size: cover;
+  filter: brightness(120%);
+  gap: 20px;
+}
+
+#win-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  gap: 15px;
 }
 
 .title {
@@ -18,12 +44,25 @@ body {
   height: 20%;
   align-items: center;
   justify-content: center;
+  font-size: 60px;
+  font-weight: 600;
+  text-decoration: underline wavy;
+  text-decoration-color: var(--color-blue);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+
+#game-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  min-height: 73px;
 }
 
 .boards-area {
   display: flex;
   justify-content: space-around;
-  flex: 1;
 }
 
 .board-area {
@@ -35,34 +74,80 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 45px;
+  text-decoration: underline;
+  text-decoration-color: var(--color-blue);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
+
+
 
 .board {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
+  border: 2px solid var(--color-blue);
 }
 
 .computer-cell, 
 .player-cell {
-  border: 1px solid black;
+  border: 1px solid var(--color-medium-grey);
   width: 30px;
   height: 30px;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .player-cell.hover {
-  background-color: grey;
+  background-color: var(--color-medium-grey);
 }
 
-.occupied {
-  background-color: black;
+.player-cell.occupied {
+  background-color: var(--color-medium-grey);
 }
 
 .missed {
-  background-color: aqua;
+  background-image: url('./dot.png');
+  background-size: cover;
 }
 
-.hit {
-  background-color: red;
+.player-cell.hit,
+.computer-cell.hit {
+  background-image: url('./cross.png');
+  background-size: cover;
+
+}
+
+.hit.sunk {
+  border: 3px solid var(--color-blue);
+}
+
+.btn-container {
+  display: flex;
+  gap: 50px;
+}
+
+#yes-btn,
+#no-btn {
+  font-size: 25px;
+  font-family: handwrite, sans-serif;
+  color: var(--color-blue);
+  background: inherit;
+  border-radius: 3px;
+  border: 1px solid  var(--color-blue);
+  width: 5em;
+  height: 2em;
+}
+
+#yes-btn:hover,
+#no-btn:hover {
+  background-color: var(--color-blue);
+  color: white;
+  transition: all .3s;
+}
+
+#yes-btn:active,
+#no-btn:active {
+  transform: (translateY(2px));
 }
