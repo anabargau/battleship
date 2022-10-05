@@ -6,7 +6,6 @@ This app lets you play battleship against the computer. At first you have to pla
 * Javascript
 * Jest
 * Webpack
-* Firebase
 * CSS
 
 ## How to run the app
